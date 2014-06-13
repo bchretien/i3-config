@@ -5,7 +5,7 @@ font xft:Cousine bold 7.2
 new_window pixel 3
 focus_follows_mouse  no
 
-#don't move to neighbouring screen with hjkl
+# do not move to neighbouring screen with hjkl
 force_focus_wrapping yes
 
 set $blue #005588
@@ -26,12 +26,10 @@ bindsym $mod+Return exec urxvtc
 bindsym $mod+c kill
 
 # start dmenu (a program launcher)
-bindsym $mod+p exec "dmenu_run -nb black -p run"
-
-bindsym $mod+Shift+p exec "~/.bin/pass-autotype-dmenu"
+bindsym $mod+p exec "dmenu_run -p run"
 
 # screen lock
-bindsym Control+$mod+l exec slimlock
+bindsym Control+$mod+l exec i3lock -c000000
 
 # change focus
 bindsym $mod+h focus left
@@ -75,8 +73,8 @@ bindsym $mod+space focus mode_toggle
 bindsym $mod+6 workspace back_and_forth
 
 # switch to workspace
-bindsym $mod+q workspace 1: q
-bindsym $mod+w workspace 2: w
+bindsym $mod+a workspace 1: a
+bindsym $mod+z workspace 2: z
 bindsym $mod+e workspace 3: e
 bindsym $mod+r workspace 4: r
 bindsym $mod+t workspace 5: t
@@ -86,8 +84,8 @@ bindsym $mod+i workspace 8: i
 bindsym $mod+o workspace 9: o
 
 # move focused container to workspace
-bindsym $mod+Shift+q move container to workspace 1: q
-bindsym $mod+Shift+w move container to workspace 2: w
+bindsym $mod+Shift+a move container to workspace 1: a
+bindsym $mod+Shift+z move container to workspace 2: z
 bindsym $mod+Shift+e move container to workspace 3: e
 bindsym $mod+Shift+r move container to workspace 4: r
 bindsym $mod+Shift+t move container to workspace 5: t
@@ -96,21 +94,21 @@ bindsym $mod+Shift+u move container to workspace 7: u
 bindsym $mod+Shift+i move container to workspace 8: i
 bindsym $mod+Shift+o move container to workspace 9: o
 
-bindsym $mod+z reload
+bindsym $mod+w reload
 bindsym $mod+Shift+x restart
-bindsym $mod+Shift+z exit
+bindsym $mod+Shift+w exit
 
 mode "resize" {
-        bindsym h   resize shrink width 10 px or 10 ppt
-        bindsym j   resize grow height 10 px or 10 ppt
-        bindsym k   resize shrink height 10 px or 10 ppt
-        bindsym l   resize grow width 10 px or 10 ppt
+  bindsym h   resize shrink width 10 px or 10 ppt
+  bindsym j   resize grow height 10 px or 10 ppt
+  bindsym k   resize shrink height 10 px or 10 ppt
+  bindsym l   resize grow width 10 px or 10 ppt
 
-        # back to normal: Enter or Escape or q or ^[
-        bindsym Return mode "default"
-        bindsym q mode "default"
-        bindsym Escape mode "default"
-        bindcode Control+34 mode "default"
+  # back to normal: Enter or Escape or q or ^[
+  bindsym Return mode "default"
+  bindsym q mode "default"
+  bindsym Escape mode "default"
+  bindcode Control+34 mode "default"
 }
 
 bindsym $mod+s mode "resize"
@@ -132,17 +130,25 @@ bindsym XF86TouchpadToggle exec "synclient TouchpadOff=$(synclient | awk '/Touch
 
 bindsym XF86Display exec "arandr"
 
-bindsym $mod+a exec "urxvtc -e alsamixer"
-bindsym $mod+Shift+a exec "pavucontrol"
+bindsym $mod+q exec "urxvtc -e alsamixer"
+bindsym $mod+Shift+q exec "pavucontrol"
+
+# Floating exceptions
+for_window [class="Wine"] floating enable
 
 bar {
-        position top
-        status_command ~/.i3/conky
-        colors { 
-                statusline #AAAAAA
-                background #333333
-                focused_workspace $gray2 $gray2 #FFFFFF
-                inactive_workspace $gray1 $gray1 #AAAAAA
-        }
+  # Conky bar
+  #status_command ~/.i3/conky
+  # i3blocks var
+  status_command i3blocks
+
+  position top
+
+  colors {
+    statusline #AAAAAA
+    background #333333
+    focused_workspace $gray2 $gray2 #FFFFFF
+    inactive_workspace $gray1 $gray1 #AAAAAA
+  }
 }
 
