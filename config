@@ -1,6 +1,7 @@
 set $mod Mod4
 
-font xft:Cousine bold 7.2
+#font xft:Cousine bold 7.2
+font xft:Droid Sans Mono 10
 
 new_window pixel 3
 focus_follows_mouse  no
@@ -116,17 +117,17 @@ bindsym $mod+s mode "resize"
 # multimedia keys
 bindsym XF86AudioRaiseVolume exec "amixer -D pulse sset Master '3%+'"
 bindsym XF86AudioLowerVolume exec "amixer -D pulse sset Master '1%-'"
-bindsym XF86AudioMute exec "amixer -D pulse set Master toggle"
-bindsym XF86AudioMicMute exec "amixer -D pulse sset Capture toggle"
+bindsym XF86AudioMute        exec "amixer -D pulse set Master toggle"
+bindsym XF86AudioMicMute     exec "amixer -D pulse sset Capture toggle"
 
-bindsym XF86AudioPlay exec "~/.bin/player toggle"
-bindsym XF86AudioStop exec "~/.bin/player stop"
-bindsym XF86AudioNext exec "~/.bin/player next"
-bindsym XF86AudioPrev exec "~/.bin/player previous"
+bindsym XF86AudioPlay exec "clementine --play-pause&"
+bindsym XF86AudioStop exec "clementine --stop&"
+bindsym XF86AudioNext exec "clementine --next&"
+bindsym XF86AudioPrev exec "clementine --previous&"
 
 bindsym XF86KbdBrightnessDown exec "sudo /opt/kbdlight/bin/kbdlight -"
-bindsym XF86KbdBrightnessUp exec "sudo /opt/kbdlight/bin/kbdlight +"
-bindsym XF86TouchpadToggle exec "synclient TouchpadOff=$(synclient | awk '/TouchpadOff/ {print ($3+1)%2}')"
+bindsym XF86KbdBrightnessUp   exec "sudo /opt/kbdlight/bin/kbdlight +"
+bindsym XF86TouchpadToggle    exec "synclient TouchpadOff=$(synclient | awk '/TouchpadOff/ {print ($3+1)%2}')"
 
 bindsym XF86Display exec "arandr"
 
@@ -136,11 +137,17 @@ bindsym $mod+Shift+q exec "pavucontrol"
 # Floating exceptions
 for_window [class="Wine"] floating enable
 
+# Make the currently focused window a scratchpad
+bindsym $mod+Shift+exclam move scratchpad
+
+# Show the first scratchpad window
+bindsym $mod+exclam scratchpad show
+
 bar {
   # Conky bar
   #status_command ~/.i3/conky
   # i3blocks var
-  status_command i3blocks
+  status_command i3blocks -c ~/.i3/i3blocks.conf
 
   position top
 
