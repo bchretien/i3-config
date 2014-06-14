@@ -34,6 +34,9 @@ bindsym $mod+p exec "dmenu_run -p run"
 # screen lock
 bindsym Control+$mod+l exec i3lock -c000000
 
+# screenshot
+bindsym Print exec xfce4-screenshooter
+
 # change focus
 bindsym $mod+h focus left
 bindsym $mod+j focus down
