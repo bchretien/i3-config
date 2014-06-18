@@ -28,25 +28,26 @@ binmode(STDOUT, ":utf8");
 # default values
 my $t_warn = 70;
 my $t_crit = 90;
-my $chip = "coretemp-isa-0000";
+my $chip = "";
 my $temperature = -9999;
 
 sub help {
-    print "Usage: temperature [-w <warning>] [-c <critical>] [<chip>]\n";
+    print "Usage: temperature [-w <warning>] [-c <critical>] [--chip <chip>]\n";
     print "-w <percent>: warning threshold to become yellow\n";
     print "-c <percent>: critical threshold to become red\n";
-    print "<chip>: sensor chip\n";
+    print "--chip <chip>: sensor chip\n";
     exit 0;
 }
 
 GetOptions("help|h" => \&help,
            "w=i"    => \$t_warn,
-           "c=i"    => \$t_crit);
+           "c=i"    => \$t_crit,
+           "chip=s" => \$chip);
 
 # Get chip temperature
-open (SENSORS, 'sensors $chip |') or die "Cannot exec sensors $!";
+open (SENSORS, "sensors $chip |") or die "Cannot exec sensors $!";
 while (<SENSORS>) {
-    if (/^Physical id \d:\s+\+(\d+\.\d+)/) {
+    if (/^Physical id \d:\s+[\+]*([\-]*\d+\.\d+)/) {
         $temperature = $1;
         last;
     }
