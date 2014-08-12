@@ -1,43 +1,36 @@
-# My very own i3 Configuration
+# i3 configuration
 
 ## Requirements
-### general
-* i3 - window manager
-* i3status - status bar
-* feh - setting bg, also nice image viewer
-* urxvt - terminal emulator
-* unclutter - autohide mouse cursor
-* udiskie - device automounting
-* dunst - notifications
-* pulseaudio - audio managment
-* autocutsel - clipboard synchroniation
-* dmenu - Super-P launcher
-* pavucontrol - pulseaudio mixer
-* alsamixer
-### from xorg
-* setxkbmap - setting keyboard layout
-* xmodmap - custom key changes
+
+* [i3][] - window manager
+* [i3blocks][] - status bar
 
 
-##Installation
-It's as simple as that:
+## Installation
+
+You can either use these files directly:
 
 ```bash
 cd
-git clone https://github.com/ivyl/i3-config.git .i3
-ln -s .i3/xinitrc .xinitrc
-ln -s .i3/gtkrc-2.0 .gtkrc-2.0
-ln -f $PWD/gtk-3.0-settings ~/.config/gtk-3.0/settings.ini
+git clone https://github.com/bchretien/i3-config.git .i3
 ```
 
-##Bindings
-* Super-Shift-c - close current windows
-* Super-Shift-Enter - open terminal
-* Super - drag floating windows
-* Super-t - toggle floating mode
-* Super-f - fullscreen
-* Super-r - resize mode
-* Super-d - parent container - dad
-* Super-b - child container - baby
+or you can use my [dotfiles][].
 
-Check config for more.
+## Bindings
+
+* <kbd>Super</kbd>+<kbd>c</kbd>: close current window
+* <kbd>Super</kbd>+<kbd>Enter</kbd>: open terminal
+* <kbd>Super</kbd>: drag floating windows
+* <kbd>Super</kbd>+<kbd>Shift</kbd>+<kbd>f</kbd>: toggle tiling/floating mode
+* <kbd>Super</kbd>+<kbd>f</kbd>: fullscreen
+* <kbd>Super</kbd>+<kbd>s</kbd>: resize mode
+* <kbd>Super</kbd>+<kbd>d</kbd>: parent container ("dad")
+* <kbd>Super</kbd>+<kbd>b</kbd>: child container ("baby")
+
+Check [config][] for more.
+
+[i3]: http://i3wm.org/
+[i3blocks]: https://github.com/vivien/i3blocks
+[dotfiles]: https://github.com/bchretien/dotfiles
+[config]: config
