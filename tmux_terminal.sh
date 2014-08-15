@@ -1,18 +1,32 @@
 #!/bin/sh
 
+# Generate unique tmux session name
+function session_name()
+{
+  DELIMITER="#"
+  NAME="$USER@`hostname`"
+  IDS=`tmux ls | grep "$NAME" | cut -d':' -f1 | cut -d"$DELIMITER" -f2`
+  ID=0
+  while [[ " ${IDS[*]} " =~ "$ID" ]]
+  do
+    (( ID++ ))
+  done
+  echo "$NAME$DELIMITER$ID"
+}
+
 # If tmux is not available or the terminal is unknown, simply return
 # the terminal
 if [[ -z `command -v tmux` || -z "$TERMINAL" ]]; then
   i3-sensible-terminal
 else
-  # Command: reattach tmux session if any, else create a new one
-  COMMAND="tmux -q has-session && exec tmux attach-session -d
-           || exec tmux new-session -n$USER -s$USER@$HOSTNAME"
+  SESSION_NAME=$(session_name)
+  COMMAND="exec tmux new-session -n $USER -s \"$SESSION_NAME\""
+  echo $SESSION_NAME
 
   if [[ "$TERMINAL" = "urxvt" ]]; then
-    urxvt -e $SHELL -c $COMMAND
+    urxvt -e "$SHELL -c \"$COMMAND\""
   elif [[ "$TERMINAL" = "termite" ]]; then
-    termite -e "$SHELL -c $COMMAND"
+    termite -e "$SHELL -c \"$COMMAND\""
   else
      i3-sensible-terminal
   fi
