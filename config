@@ -6,7 +6,11 @@ set $mod Mod4
 font xft:Droid Sans Mono 10
 
 new_window pixel 3
+
 focus_follows_mouse  no
+
+# Hide edge borders
+hide_edge_borders both
 
 # do not move to neighbouring screen with hjkl
 force_focus_wrapping yes
