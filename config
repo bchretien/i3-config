@@ -171,7 +171,7 @@ bar {
   # Conky bar
   #status_command ~/.i3/conky
   # i3blocks var
-  status_command i3blocks -c ~/.i3/i3blocks.conf
+  status_command SCRIPTS_DIR=/usr/libexec/i3blocks i3blocks -c ~/.i3/i3blocks.conf
 
   position top
 
