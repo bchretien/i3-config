@@ -23,6 +23,7 @@ workspace_auto_back_and_forth yes
 set $lightgray #AAAAAA
 set $gray      #484848
 set $darkgray  #333333
+set $black     #000000
 set $white     #FFFFFF
 set $red       #FF0000
 set $blue      #005588
@@ -190,14 +191,16 @@ bar {
 
   position top
 
+  font xft:Droid Sans Mono 10
+
   colors {
     # Status line:
     statusline $lightgray
-    background $darkgray
+    background $black
 
     # Workspaces: border, background and text colors
     focused_workspace  $darkgray $darkgray $white
-    inactive_workspace $gray     $gray     $lightgray
+    inactive_workspace $black    $black    $lightgray
     active_workspace   $red      $red      $white
 
     # We do not use this since custom separators are not
