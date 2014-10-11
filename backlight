@@ -15,8 +15,12 @@
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 case $BLOCK_BUTTON in
-    4) xbacklight -inc 10 ;; # scroll up
-    5) xbacklight -dec 10 ;; # scroll down
+    4) # scroll up
+      xbacklight -inc 10 ;;
+    5) # scroll down
+      if [[ $(xbacklight | sed "s/\..*//") -gt 15 ]]; then
+        xbacklight -dec 10
+      fi;;
 esac
 
 xbacklight | sed "s/\..*/%/"
