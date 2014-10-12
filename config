@@ -191,7 +191,8 @@ bar {
 
   position top
 
-  font xft:Droid Sans Mono 10
+  # Default font, fallback font (icons)
+  font xft:Droid Sans Mono, Icons 10
 
   colors {
     # Status line:
