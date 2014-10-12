@@ -14,11 +14,37 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+YAD_CAL_CLASS="YADWIN_CALENDAR"
+
+kill_calendar() {
+  # Kill any existing yad calendar
+  if [[ -n "$1" ]]; then
+    kill $1
+  fi
+}
+
+display_calendar() {
+  # Display the calendar with yad at the right position
+  eval $(xdotool getmouselocation --shell) &>/dev/null
+  yad --no-buttons --geometry=+$(($X-300))+20 \
+      --class ${YAD_CAL_CLASS} --calendar & &>/dev/null
+}
+
+toggle_calendar() {
+  # Calendar PID
+  CAL_PID=$(xdotool search --class ${YAD_CAL_CLASS} getwindowpid)
+
+  # If there's already a calendar process
+  if [[ -n "$CAL_PID" ]]; then
+    kill_calendar $CAL_PID
+  else
+    display_calendar
+  fi
+}
+
 case $BLOCK_BUTTON in
     # Get mouse position then display calendar with yad
-    1) eval $(xdotool getmouselocation --shell) &>/dev/null \
-      && yad --no-buttons --geometry=+$(($X-300))+20 \
-      --class "YADWIN" --calendar &>/dev/null ;;
+    [1-5]) toggle_calendar ;;
 esac
 
 date '+%d/%m/%Y %H:%M'
