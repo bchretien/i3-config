@@ -19,6 +19,9 @@ force_focus_wrapping yes
 # by retyping the same keys
 workspace_auto_back_and_forth yes
 
+# Delaying urgency hint reset on workspace change
+force_display_urgency_hint 500 ms
+
 # Colors
 set $lightgray #AAAAAA
 set $gray      #484848
@@ -201,8 +204,9 @@ bar {
 
     # Workspaces: border, background and text colors
     focused_workspace  $darkgray $darkgray $white
+    active_workspace   $darkgray $darkgray $white
     inactive_workspace $black    $black    $lightgray
-    active_workspace   $red      $red      $white
+    urgent_workspace   $red      $red      $white
 
     # We do not use this since custom separators are not
     # well supported
