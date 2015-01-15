@@ -25,6 +25,7 @@ force_display_urgency_hint 500 ms
 # Colors
 set $lightgray #AAAAAA
 set $gray      #484848
+set $gray2     #757575
 set $darkgray  #333333
 set $black     #000000
 set $white     #FFFFFF
@@ -203,7 +204,7 @@ bar {
     background $black
 
     # Workspaces: border, background and text colors
-    focused_workspace  $darkgray $darkgray $white
+    focused_workspace  $gray2    $darkgray $white
     active_workspace   $darkgray $darkgray $white
     inactive_workspace $black    $black    $lightgray
     urgent_workspace   $red      $red      $white
