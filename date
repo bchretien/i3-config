@@ -14,7 +14,24 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+TIME_ZONES=("`date +%Z`" ${BLOCK_INSTANCE:-})
+CURRENT_TZ_FILE="/tmp/i3_timezone_id.dat"
+
 YAD_CAL_CLASS="YADWIN_CALENDAR"
+
+# If we do not have a file, start at zero
+TZ_ID=0
+if [ -f "${CURRENT_TZ_FILE}" ] ; then
+  TZ_ID="`cat ${CURRENT_TZ_FILE}`"
+fi
+
+switch_time_zone() {
+  N_TZ=${#TIME_ZONES[@]}
+  if [ ${N_TZ} -gt 0 ]; then
+    TZ_ID=$((($N_TZ+$TZ_ID+$1)%$N_TZ))
+    echo "${TZ_ID}" > ${CURRENT_TZ_FILE}
+  fi
+}
 
 kill_calendar() {
   # Kill any existing yad calendar
@@ -43,8 +60,17 @@ toggle_calendar() {
 }
 
 case $BLOCK_BUTTON in
-    # Get mouse position then display calendar with yad
-    [1-5]) toggle_calendar ;;
+    # Mouse wheel: switch time zone
+    [4]) switch_time_zone  1;;
+    [5]) switch_time_zone -1;;
+    # Else: get mouse position then display calendar with yad
+    [1-3]) toggle_calendar ;;
 esac
 
-date '+%d/%m/%Y %H:%M'
+CURRENT_TZ=${TIME_ZONES[${TZ_ID}]}
+DATE_STR=`TZ=${CURRENT_TZ} date "+%d/%m/%Y %H:%M"`
+# If we are not using the default TZ:
+if [ ${TZ_ID} -gt 0 ]; then
+  CITY=" [`echo ${CURRENT_TZ} | cut -d'/' -f2 | tr _ \" \"`]"
+fi
+echo "${DATE_STR}${CITY}"
