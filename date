@@ -14,7 +14,19 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-TIME_ZONES=("`date +%Z`" ${BLOCK_INSTANCE:-})
+default_timezone() {
+  cur_tz=""
+  if [ -h /etc/localtime ]; then
+    # Fixes an apparent bug with ICT
+    cur_tz="`readlink /etc/localtime | sed \"s/[.]\+\/usr\/share\/zoneinfo\///\"`"
+  else
+    cur_tz="`date +%Z`"
+  fi
+  echo "$cur_tz"
+}
+
+DATE_FORMAT="${BLOCK_INSTANCE:-"%d/%m/%Y %H:%M"}"
+TIME_ZONES=("`default_timezone`" ${1:-})
 CURRENT_TZ_FILE="/tmp/i3_timezone_id.dat"
 
 YAD_CAL_CLASS="YADWIN_CALENDAR"
@@ -68,7 +80,7 @@ case $BLOCK_BUTTON in
 esac
 
 CURRENT_TZ=${TIME_ZONES[${TZ_ID}]}
-DATE_STR=`TZ=${CURRENT_TZ} date "+%d/%m/%Y %H:%M"`
+DATE_STR=`TZ=${CURRENT_TZ} date "+${DATE_FORMAT}"`
 # If we are not using the default TZ:
 if [ ${TZ_ID} -gt 0 ]; then
   CITY=" [`echo ${CURRENT_TZ} | cut -d'/' -f2 | tr _ \" \"`]"
