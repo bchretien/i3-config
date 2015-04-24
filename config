@@ -32,9 +32,9 @@ set $white     #FFFFFF
 set $red       #FF0000
 set $blue      #005588
 
-client.focused            $gray       $gray       #FFFFFF   #333333
-client.focused_inactive   $darkgray   $darkgray   #FFFFFF   #000000
-client.unfocused          $darkgray   $darkgray   #FFFFFF   #000000
+client.focused          $darkgray $darkgray #FFFFFF   #333333
+client.focused_inactive $darkgray $darkgray #FFFFFF   #000000
+client.unfocused        $black    $black    #FFFFFF   #000000
 
 # use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -46,10 +46,13 @@ bindsym $mod+Return exec $HOME/.i3/tmux_terminal.sh
 bindsym $mod+c kill
 
 # start dmenu (a program launcher)
-bindsym $mod+p exec "dmenu_run -p run"
+set $dmenu_font   -xos4-terminus-medium-r-*-*-14-*
+set $dmenu_prompt run
+set $dmenu_misc   -l 4 -i
+bindsym $mod+p exec dmenu_run $dmenu_misc -nb '$black' -nf '$lightgray' -sb '$darkgray' -sf '$lightgray' -fn '$dmenu_font' -p $dmenu_prompt
 
 # screen lock
-bindsym Control+$mod+l exec i3lock -c000000
+bindsym Control+$mod+l exec $HOME/.i3/lock.sh
 
 # screenshot
 bindsym Print exec xfce4-screenshooter
@@ -107,8 +110,8 @@ bindsym $mod+Shift+Right workspace next
 bindsym $mod+Shift+Left workspace prev
 
 # switch to workspace
-bindsym $mod+a workspace 1: a
-bindsym $mod+z workspace 2: z
+bindsym $mod+q workspace 1: q
+bindsym $mod+w workspace 2: w
 bindsym $mod+e workspace 3: e
 bindsym $mod+r workspace 4: r
 bindsym $mod+t workspace 5: t
@@ -118,8 +121,8 @@ bindsym $mod+i workspace 8: i
 bindsym $mod+o workspace 9: o
 
 # move focused container to workspace
-bindsym $mod+Shift+a move container to workspace 1: a
-bindsym $mod+Shift+z move container to workspace 2: z
+bindsym $mod+Shift+q move container to workspace 1: q
+bindsym $mod+Shift+w move container to workspace 2: w
 bindsym $mod+Shift+e move container to workspace 3: e
 bindsym $mod+Shift+r move container to workspace 4: r
 bindsym $mod+Shift+t move container to workspace 5: t
@@ -128,9 +131,9 @@ bindsym $mod+Shift+u move container to workspace 7: u
 bindsym $mod+Shift+i move container to workspace 8: i
 bindsym $mod+Shift+o move container to workspace 9: o
 
-bindsym $mod+w       reload
+bindsym $mod+x       reload
 bindsym $mod+Shift+x restart
-bindsym $mod+Shift+w exit
+bindsym $mod+Shift+c exit
 
 mode "resize" {
   bindsym h resize shrink width  10 px or 10 ppt
@@ -153,9 +156,6 @@ bindsym XF86AudioLowerVolume exec "amixer -D pulse sset Master  '1%-'"
 bindsym XF86AudioMute        exec "amixer -D pulse set  Master  toggle"
 bindsym XF86AudioMicMute     exec "amixer -D pulse sset Capture toggle"
 
-bindsym $mod+q       exec "termite -e alsamixer"
-bindsym $mod+Shift+q exec "pavucontrol"
-
 # Music
 bindsym XF86AudioPlay exec "mpc toggle"
 bindsym XF86AudioStop exec "mpc stop"
@@ -173,6 +173,7 @@ bindsym XF86TouchpadToggle    exec "synclient TouchpadOff=$(synclient | awk '/To
 bindsym XF86Display exec "arandr"
 
 # Floating exceptions
+for_window [class="Steam"] floating enable
 for_window [class="Wine"] floating enable
 for_window [class="YADWIN"] floating enable border none
 for_window [instance="Download"] floating enable
