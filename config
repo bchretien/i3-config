@@ -56,7 +56,7 @@ set $dmenu_misc   -l 4 -i
 bindsym $mod+p exec dmenu_run $dmenu_misc -nb '$black' -nf '$lightgray' -sb '$darkgray' -sf '$lightgray' -fn '$dmenu_font' -p $dmenu_prompt
 
 # screen lock
-bindsym Control+$mod+l exec $HOME/.i3/lock.sh
+bindsym Control+$mod+l exec $HOME/.i3/i3lock-extra.sh -m pixelize
 
 # screenshot
 bindsym Print exec xfce4-screenshooter
