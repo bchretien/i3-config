@@ -7,7 +7,11 @@ font xft:Droid Sans Mono 10
 
 new_window pixel 3
 
+# Window focus follows your mouse movements
 focus_follows_mouse  no
+# When switching focus to a window on a different output, warp the cursor to
+# the center of that window
+mouse_warping none
 
 # Hide edge borders
 hide_edge_borders both
