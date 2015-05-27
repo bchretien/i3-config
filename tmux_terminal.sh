@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Generate unique tmux session name
 function session_name()
