@@ -38,9 +38,9 @@ awk -v type=$TYPE '
 END {
 	# full text
 	if (type == "swap")
-		printf("%.1f%\n", 100. * (1. - swap_free/swap_total))
+		printf("%.1f%%\n", 100. * (1. - swap_free/swap_total))
 	else
-    printf("%.1f%\n", 100. * (1. - mem_free/mem_total))
+		printf("%.1f%%\n", 100. * (1. - mem_free/mem_total))
 
 	# TODO: short text
 
