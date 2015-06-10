@@ -1,41 +1,94 @@
-#!/bin/sh
+#!/usr/bin/env python3
 
-PLAY_SYMBOL="▶"
-PAUSE_SYMBOL="▮▮"
-STOP_SYMBOL="■"
+# Copyright (C) 2014 Jason Pleau <jason@jpleau.ca>
 
-function print_symbol()
-{
-  case "$1" in
-    "playing") echo "$PLAY_SYMBOL";;
-    "paused") echo "$PAUSE_SYMBOL";;
-    "stopped") echo "$STOP_SYMBOL";;
-  esac
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
+
+from subprocess import Popen, PIPE
+from re import findall
+from os import environ
+from sys import exit
+from shutil import which
+
+mpc_cmd = ["mpc", "-p", "49000"]
+
+# set to False if you don't want fancy utf-8 symbols
+use_symbols = True
+
+labels = {
+    "symbols": {
+            "playing": "",
+            "paused": "",
+            "stopped": "",
+            "down": "",
+    },
+    "text": {
+            "playing": "playing: ",
+            "paused": "paused: ",
+            "stopped": "stopped",
+            "down": "down",
+    }
 }
 
-# First: check that mpc is installed
-command -v mpc >/dev/null 2>&1 || { echo >&2 "mpc missing"; exit 1; }
+text = labels["symbols"] if use_symbols else labels["text"]
 
-# Second: check that mpd is running
-MPD_STATUS="$(mpc status -f "" 2>/dev/null)"
-if [[ "$MPD_STATUS" == "" ]]; then
-  print_symbol "stopped"
-else
-  # Then get the player status
-  MPD_STATE=$(echo "$MPD_STATUS" | grep -Po '(?<=\[).*(?=\])')
+def get_mpc_status():
+    # requires 'mpc' to be installed and be in PATH, exit if it is not
+    if which("mpc") == None:
+        print("mpc not installed")
+        exit()
 
-  case $BLOCK_BUTTON in
-    1) # left click (toggling changes the status)
-      [ "$MPD_STATE" == "paused"] && print_symbol "playing" \
-        || print_symbol "paused" ;
-      mpc toggle& ;;
-    4) # scroll up
-      print_symbol $MPD_STATE ;
-      mpc prev& ;;
-    5) # scroll down
-      print_symbol $MPD_STATE ;
-      mpc next& ;;
-    *) print_symbol $MPD_STATE ;;
-  esac
-fi
+    proc_data = Popen(mpc_cmd + ["status", "-f", ""], stdout=PIPE, stderr=PIPE).communicate()
 
+    if proc_data[1]:
+        print(text["down"])
+        exit()
+
+    return proc_data[0].decode('utf-8').split("\n")
+
+mpc_status = get_mpc_status()
+
+button_pressed = int(environ["BLOCK_BUTTON"]) if "BLOCK_BUTTON" in environ and len(environ["BLOCK_BUTTON"]) > 0 else 0
+
+changed = False
+if button_pressed > 0:
+    if button_pressed == 1:
+        changed = True
+        Popen(mpc_cmd + ["toggle"], stdout=PIPE)
+    elif button_pressed == 3:
+        changed = True
+        Popen(mpc_cmd + ["stop"], stdout=PIPE)
+    elif button_pressed == 4:
+        changed = True
+        Popen(mpc_cmd + ["prev"], stdout=PIPE)
+    elif button_pressed == 5:
+        changed = True
+        Popen(mpc_cmd + ["next"], stdout=PIPE)
+
+if changed:
+    mpc_status = get_mpc_status()
+
+if len(mpc_status) == 2:
+    print(text["stopped"])
+else:
+    status = findall("(playing|paused)", mpc_status[1])[0]
+    if status == "playing":
+        print(text["playing"], end="")
+    elif status == "paused":
+        print(text["paused"], end="")
+    else:
+        print("unknown")
+
+    print(mpc_status[0])
