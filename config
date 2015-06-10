@@ -113,27 +113,42 @@ bindsym $mod+Shift+Right workspace next
 # switch to next workspace
 bindsym $mod+Shift+Left workspace prev
 
+# define workspace aliases
+set $WS1 : q
+set $WS2 : w
+set $WS3 : e
+set $WS4 : r
+set $WS5 : t
+set $WS6 : y
+set $WS7 : u
+set $WS8 : i
+set $WS9 : o
+
+set $WSWEB   : w
+set $WSVIDEO : y
+set $WSCHAT  : u
+
 # switch to workspace
-bindsym $mod+q workspace : q
-bindsym $mod+w workspace : w
-bindsym $mod+e workspace : e
-bindsym $mod+r workspace : r
-bindsym $mod+t workspace : t
-bindsym $mod+y workspace : y
-bindsym $mod+u workspace : u
-bindsym $mod+i workspace : i
-bindsym $mod+o workspace : o
+bindsym $mod+q workspace $WS1
+bindsym $mod+w workspace $WS2
+bindsym $mod+e workspace $WS3
+bindsym $mod+r workspace $WS4
+bindsym $mod+t workspace $WS5
+bindsym $mod+y workspace $WS6
+bindsym $mod+u workspace $WS7
+bindsym $mod+i workspace $WS8
+bindsym $mod+o workspace $WS9
 
 # move focused container to workspace
-bindsym $mod+Shift+q move container to workspace : q
-bindsym $mod+Shift+w move container to workspace : w
-bindsym $mod+Shift+e move container to workspace : e
-bindsym $mod+Shift+r move container to workspace : r
-bindsym $mod+Shift+t move container to workspace : t
-bindsym $mod+Shift+y move container to workspace : y
-bindsym $mod+Shift+u move container to workspace : u
-bindsym $mod+Shift+i move container to workspace : i
-bindsym $mod+Shift+o move container to workspace : o
+bindsym $mod+Shift+q move container to workspace $WS1
+bindsym $mod+Shift+w move container to workspace $WS2
+bindsym $mod+Shift+e move container to workspace $WS3
+bindsym $mod+Shift+r move container to workspace $WS4
+bindsym $mod+Shift+t move container to workspace $WS5
+bindsym $mod+Shift+y move container to workspace $WS6
+bindsym $mod+Shift+u move container to workspace $WS7
+bindsym $mod+Shift+i move container to workspace $WS8
+bindsym $mod+Shift+o move container to workspace $WS9
 
 bindsym $mod+x       reload
 bindsym $mod+Shift+x restart
@@ -183,11 +198,12 @@ for_window [class="Wine"]        floating enable
 for_window [class="YADWIN"]      floating enable border none
 for_window [instance="Download"] floating enable
 
-assign [title="Firefox"]  : w
-assign [title="SMPlayer"] : y
-assign [class="Skype"]    : u
-assign [class="Mumble"]   : u
-assign [title="Steam"]    : i
+assign [title="Firefox"]     $WSWEB
+assign [title="qutebrowser"] $WSWEB
+assign [title="SMPlayer"]    $WSVIDEO
+assign [class="Skype"]       $WSCHAT
+assign [class="Mumble"]      $WSCHAT
+assign [title="Steam"]       $WSSTEAM
 
 # Make the currently focused window a scratchpad
 bindsym $mod+Shift+exclam move scratchpad
