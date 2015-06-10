@@ -4,7 +4,7 @@
 # https://github.com/enkore/i3pystatus/wiki/Shutdown-Menu
 
 SYSTEMCTL="systemctl"
-LOCKSCRIPT="$HOME/.i3/i3lock-extra.sh -m pixelize"
+LOCKSCRIPT="$HOME/.i3/i3lock-extra -m pixelize"
 
 # Systemctl required
 if ! command -v $SYSTEMCTL >/dev/null 2>&1; then
