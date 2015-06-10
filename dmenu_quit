@@ -1,0 +1,44 @@
+#!/bin/bash
+# Use dmenu/rofi to change runstate using systemd
+# Adapted from i3pystatus wiki:
+# https://github.com/enkore/i3pystatus/wiki/Shutdown-Menu
+
+SYSTEMCTL="systemctl"
+LOCKSCRIPT="$HOME/.i3/i3lock-extra.sh -m pixelize"
+
+# Systemctl required
+if ! command -v $SYSTEMCTL >/dev/null 2>&1; then
+  exit 2
+fi
+
+# names refer to associative array parameters
+typeset -A CHOICES
+
+CHOICES=(
+  [Shutdown]="${SYSTEMCTL} poweroff"
+  [Reboot]="${SYSTEMCTL} reboot"
+  [Hibernate]="${SYSTEMCTL} hibernate"
+  [Suspend]="${SYSTEMCTL} suspend"
+  [Halt]="${SYSTEMCTL} halt"
+  [Lock]="${LOCKSCRIPT}"
+  [Cancel]=""
+)
+
+NROWS=${#CHOICES[@]}
+
+DMENU="dmenu -i -l $NROWS -fn -xos4-terminus-medium-r-*-*-14-*"
+ROFI="rofi -dmenu -lines $NROWS -p Quit: -width -11 -bc white -location 3"
+
+if command -v rofi >/dev/null 2>&1; then
+  LAUNCHER=$ROFI
+elif command -v dmenu >/dev/null 2>&1; then
+  LAUNCHER=$DMENU
+else
+  exit 2
+fi
+
+CHOICE="$(printf '%s\n' "${!CHOICES[@]}" | sort | ${LAUNCHER})"
+
+if [ $? -eq 0 ]; then
+  ${CHOICES[$CHOICE]}
+fi

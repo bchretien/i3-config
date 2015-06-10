@@ -58,6 +58,9 @@ bindsym $mod+p exec dmenu_run $dmenu_misc -nb '$black' -nf '$lightgray' -sb '$da
 # screen lock
 bindsym Control+$mod+l exec $HOME/.i3/i3lock-extra.sh -m pixelize
 
+# quit menu
+bindsym Control+Mod1+Delete exec $HOME/.i3/dmenu_quit
+
 # screenshot
 bindsym Print exec xfce4-screenshooter
 
