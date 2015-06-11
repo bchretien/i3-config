@@ -21,6 +21,7 @@ CHOICES=(
   [Suspend]="${SYSTEMCTL} suspend"
   [Halt]="${SYSTEMCTL} halt"
   [Lock]="${LOCKSCRIPT}"
+  [Logout]="i3-msg exit"
   [Cancel]=""
 )
 
