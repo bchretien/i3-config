@@ -72,4 +72,10 @@ case $BLOCK_BUTTON in
   5) amixer -q -D $MIXER sset $SCONTROL $(capability) ${STEP}- unmute ;;
 esac
 
-volume | format
+speakers_disabled=$(amixer -c 0 sget "HP/Speaker Auto Detect" | grep Playback | grep -ci off)
+
+if [ "$speakers_disabled" = 1 ] ; then
+  echo "<span font_weight=\"normal\">$(volume | format)</span>"
+else
+  echo "<span font_weight=\"ultrabold\">$(volume | format)</span>"
+fi
