@@ -134,6 +134,7 @@ set $WS9 : o
 set $WSWEB   : w
 set $WSVIDEO : y
 set $WSCHAT  : u
+set $WSSTEAM : o
 
 # switch to workspace
 bindsym $mod+q workspace $WS1
