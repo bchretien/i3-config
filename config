@@ -53,11 +53,8 @@ bindsym $mod+Return exec $scriptdir/tmux_terminal
 # kill focused window
 bindsym $mod+c kill
 
-# start dmenu (a program launcher)
-set $dmenu_font   -xos4-terminus-medium-r-*-*-14-*
-set $dmenu_prompt run
-set $dmenu_misc   -l 4 -i
-bindsym $mod+p exec dmenu_run $dmenu_misc -nb '$black' -nf '$lightgray' -sb '$darkgray' -sf '$lightgray' -fn '$dmenu_font' -p $dmenu_prompt
+# start program launcher
+bindsym $mod+p exec $scriptdir/launcher "$black" "$lightgray" "$darkgray" "$lightgray" "$black"
 
 # screen lock
 bindsym Control+$mod+l exec $scriptdir/i3lock-extra -m pixelize

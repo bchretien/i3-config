@@ -1,0 +1,20 @@
+#!/bin/sh
+color_bg=${1:-"#000000"} # default = black
+color_fg=${2:-"#AAAAAA"} # default = lightgray
+color_hbg=${3:-"#333333"} # default = darkgray
+color_hfg=${4:-"#AAAAAA"} # default = lightgray
+color_border=${5:-"#000000"} # default = black
+
+if type "rofi" &> /dev/null; then
+  rofi_font="-xos4-terminus-medium-r-*-*-14-* 10"
+  rofi_misc="-location 1 -padding 0 -width 100 -lines 4 -lazy-filter-limit -1"
+  rofi_color="-bc $color_border -fg $color_fg -bg $color_bg 
+              -hlbg $color_hbg -hlfg $color_hfg"
+  exec rofi -show run $rofi_misc $rofi_color -font "$rofi_font"
+elif type "dmenu" &> /dev/null; then
+  dmenu_font="-xos4-terminus-medium-r-*-*-14-*"
+  dmenu_prompt="run"
+  dmenu_misc="-l 4 -i"
+  dmenu_color="-nb $color_bg -nf $color_fg -sb $color_hbg -sf $color_hfg"
+  exec dmenu_run $dmenu_misc $dmenu_color -fn "$dmenu_font" -p $dmenu_prompt
+fi
