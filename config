@@ -1,4 +1,5 @@
 # Note: to find the name of a key, use xev
+# Note: to find the a window's parameters, use xprop
 
 # mod key = Windows key
 set $mod Mod4
@@ -60,7 +61,7 @@ bindsym $mod+p exec $scriptdir/launcher "$black" "$lightgray" "$darkgray" "$ligh
 bindsym Control+$mod+l exec $scriptdir/i3lock-extra -m pixelize
 
 # quit menu
-bindsym Control+Mod1+Delete exec $scriptdir/dmenu_quit
+bindsym Control+Mod1+Delete exec $scriptdir/shutdown_menu
 
 # screenshot
 bindsym Print exec xfce4-screenshooter
@@ -114,7 +115,7 @@ bindsym $mod+6 workspace back_and_forth
 # switch to next workspace
 bindsym $mod+Shift+Right workspace next
 
-# switch to next workspace
+# switch to previous workspace
 bindsym $mod+Shift+Left workspace prev
 
 # define workspace aliases
@@ -131,7 +132,8 @@ set $WS9 : o
 set $WSWEB   : w
 set $WSVIDEO : y
 set $WSCHAT  : u
-set $WSSTEAM : o
+set $WSSTEAM : i
+set $WSGAME  : o
 
 # switch to workspace
 bindsym $mod+q workspace $WS1
@@ -206,9 +208,11 @@ for_window [instance="Download"] floating enable
 assign [title="Firefox"]     $WSWEB
 assign [title="qutebrowser"] $WSWEB
 assign [title="SMPlayer"]    $WSVIDEO
+assign [class="Blender"]     $WSVIDEO
 assign [class="Skype"]       $WSCHAT
 assign [class="Mumble"]      $WSCHAT
 assign [title="Steam"]       $WSSTEAM
+assign [class="Choreonoid"]  $WSGAME
 
 # Make the currently focused window a scratchpad
 bindsym $mod+Shift+exclam move scratchpad
@@ -229,7 +233,7 @@ bar {
   position top
 
   # Default font, fallback font (icons)
-  font xft:Droid Sans Mono, Icons 10
+  font xft:Droid Sans Mono, FontAwesome 10
 
   colors {
     # Status line:
