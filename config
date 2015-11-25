@@ -122,8 +122,8 @@ bindsym $mod+Shift+Left workspace prev
 set $WS1 : q
 set $WS2 : w
 set $WS3 : e
-set $WS4 : r
-set $WS5 : t
+set $WS4 : r
+set $WS5 : t
 set $WS6 : y
 set $WS7 : u
 set $WS8 : i
@@ -252,3 +252,5 @@ bar {
   }
 }
 
+# Run daemons used for i3blocks
+exec_always --no-startup-id ${HOME}/.i3/i3bar_system_daemon

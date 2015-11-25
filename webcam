@@ -1,0 +1,20 @@
+#!/bin/bash
+
+CAM_SYMBOL="\uf030"
+SIZE="10"
+ON_COLOR="green"
+OFF_COLOR="#191919"
+VIDEO_DEVICE="/dev/video0"
+
+symbol=${CAM_SYMBOL}
+color=${OFF_COLOR}
+
+if [[ -c ${VIDEO_DEVICE} ]]; then
+  if [[ "$(fuser ${VIDEO_DEVICE})" != "" ]]; then
+    symbol=${CAM_SYMBOL}
+    color=${ON_COLOR}
+  fi
+fi
+
+echo -e "<span font='${SIZE}' color='${color}'>${symbol}</span>"
+echo -e "<span font='${SIZE}' color='${color}'>${symbol}</span>"

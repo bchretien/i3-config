@@ -1,0 +1,25 @@
+#!/bin/bash
+
+ETH_SYMBOL="\uf0e8"
+WIFI_SYMBOL="\uf1eb"
+SIZE="12"
+ON_COLOR="green"
+OFF_COLOR="red"
+
+ip_route=$(ip route get 1)
+is_eth=$(echo ${ip_route} | grep "eth")
+is_wifi=$(echo ${ip_route} | grep "wlan")
+
+if [[ ! -z "${is_eth}" ]]; then
+  symbol=${ETH_SYMBOL}
+  color=${ON_COLOR}
+elif [[ ! -z "${is_wifi}" ]]; then
+  symbol=${WIFI_SYMBOL}
+  color=${ON_COLOR}
+else
+  symbol=${WIFI_SYMBOL}
+  color=${OFF_COLOR}
+fi
+
+echo -e "<span font='${SIZE}' color='${color}'>${symbol}</span>"
+echo -e "<span font='${SIZE}' color='${color}'>${symbol}</span>"

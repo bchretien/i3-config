@@ -1,0 +1,35 @@
+#!/bin/bash
+
+VIDEO_DEVICE="/dev/video0"
+MICRO_DEVICE="/dev/snd/pcmC*D*c"
+SOUND_DEVICE="/dev/snd/control*"
+NAME=$(basename "$0")
+SELF_PID=$$
+
+function kill_if_running() {
+  local pids=$(ps aux | grep ${NAME} | grep -v grep | awk '{ print $2 }')
+  pids=${pids/$SELF_PID}
+  for p in ${pids}
+  do
+    kill ${p} &>/dev/null
+  done
+  killall inotifywait &>/dev/null
+}
+
+wait_for_event() {
+  while true
+  do
+    while inotifywait -qq $1
+    do
+      # Notify i3blocks
+      pkill -SIGRTMIN+11 i3blocks
+    done
+  done
+}
+
+
+kill_if_running
+
+wait_for_event ${SOUND_DEVICE} &
+wait_for_event ${MICRO_DEVICE} &
+wait_for_event ${VIDEO_DEVICE} &
