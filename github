@@ -1,0 +1,98 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
+
+import os
+import sys
+import argparse
+import subprocess
+
+from github3 import login
+
+# Credentials files. DO NOT SHARE/COMMIT/WHATEVER.
+CREDENTIALS_FILE = os.path.expanduser("~/.i3/.gh_token")
+
+def get_github_username():
+    """
+    Get the GitHub user name from git config.
+    """
+    return subprocess.check_output(['git', 'config', 'github.user']) \
+            .rstrip().decode('utf-8')
+
+def request_token(username):
+    """
+    Request a GitHub token for later use.
+    """
+    from getpass import getpass
+    from github3 import authorize
+
+    password = ''
+
+    while not password:
+        password = getpass('Password for GitHub user {0}: '.format(username))
+
+    note = 'GitHub notifications for i3blocks'
+    note_url = 'https://github.com/bchretien/i3-config'
+    scopes = ['notifications']
+
+    auth = authorize(username, password, scopes, note, note_url)
+
+    with open(CREDENTIALS_FILE, 'w') as fd:
+        fd.write("%s\n%i" % (auth.token, auth.id))
+
+def github_login():
+    """
+    Retrieve the GitHub token and log on GitHub.
+    """
+    token = id = ''
+    with open(CREDENTIALS_FILE, 'r') as fd:
+        token = fd.readline().strip()  # Can't hurt to be paranoid
+        id = fd.readline().strip()
+
+    gh = login(token=token)
+    return gh
+
+def get_notifications():
+    """
+    Get the GitHub notifications.
+    """
+    username = get_github_username()
+
+    if not os.path.isfile(CREDENTIALS_FILE):
+        request_token(username)
+
+    gh = github_login()
+    return gh.notifications()
+
+def print_block():
+    """
+    Print block for i3blocks.
+    """
+    size = 12
+    color = "#333333"
+    symbol = "\uf09b"
+
+    notifications = get_notifications()
+    n = sum(1 for _ in notifications)
+    if n > 0:
+        color = "#ff9933"
+
+    msg = "<span font='%i' color='%s'>%s</span>" \
+          % (size, color, symbol)
+    print(msg)
+    print(msg)
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--generate-token", action="store_true",
+                        help="generate a GitHub token")
+    args = parser.parse_args()
+
+    if args.generate_token:
+        request_token()
+    elif not os.path.isfile(CREDENTIALS_FILE):
+        print("Error: run script with --generate-token to generate a GitHub token",
+               file=sys.stderr)
+        sys.exit(1)
+
+    print_block()
