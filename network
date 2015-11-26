@@ -4,9 +4,9 @@ ETH_SYMBOL="\uf0e8"
 WIFI_SYMBOL="\uf1eb"
 SIZE="12"
 ON_COLOR="green"
-OFF_COLOR="red"
+OFF_COLOR="#191919"
 
-ip_route=$(ip route get 1)
+ip_route=$(ip route)
 is_eth=$(echo ${ip_route} | grep "eth")
 is_wifi=$(echo ${ip_route} | grep "wlan")
 
