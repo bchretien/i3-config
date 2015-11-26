@@ -3,7 +3,7 @@
 CAM_SYMBOL="\uf030"
 SIZE="10"
 ON_COLOR="green"
-OFF_COLOR="#191919"
+OFF_COLOR="#333333"
 VIDEO_DEVICE="/dev/video0"
 
 symbol=${CAM_SYMBOL}

@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
 # Copyright (C) 2014 Jason Pleau <jason@jpleau.ca>
 
@@ -24,25 +25,21 @@ from shutil import which
 
 mpc_cmd = ["mpc", "-p", "49000"]
 
-# set to False if you don't want fancy utf-8 symbols
-use_symbols = True
+size = 12
+on_color = "#BA00FF"
+off_color = "#333333"
 
+header = ""
 labels = {
-    "symbols": {
-            "playing": "",
-            "paused": "",
-            "stopped": "",
-            "down": "",
-    },
-    "text": {
-            "playing": "playing: ",
-            "paused": "paused: ",
-            "stopped": "stopped",
-            "down": "down",
-    }
-}
+        "playing": ("\uf01d", on_color),
+        "paused": ("\uf28c", on_color),
+        "stopped": ("\uf28e", on_color),
+        "down": ("\uf05c", off_color),
+        }
 
-text = labels["symbols"] if use_symbols else labels["text"]
+text_format = "<span font='%u' color='%s'>%s</span> <span font='%u' color='%s'>%s</span>"
+text = {k: text_format % (size, v[1], header, size, v[1], v[0])
+        for k,v in labels.items()}
 
 def get_mpc_status():
     # requires 'mpc' to be installed and be in PATH, exit if it is not

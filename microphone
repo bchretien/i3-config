@@ -3,7 +3,7 @@
 MIC_SYMBOL="\uf130"
 SIZE="10"
 ON_COLOR="green"
-OFF_COLOR="#191919"
+OFF_COLOR="#333333"
 MICRO_DEVICE="/dev/snd/pcmC*D*c"
 
 symbol=${MIC_SYMBOL}

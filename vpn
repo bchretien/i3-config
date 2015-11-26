@@ -3,13 +3,14 @@
 VPN_SYMBOL="\uf023"
 SIZE="12"
 ON_COLOR="green"
-OFF_COLOR="#191919"
-VPN_INTERFACE="/proc/sys/net/ipv4/conf/tun0"
+OFF_COLOR="#333333"
 
+ip_route=$(ip route get 1)
+is_tun=$(echo ${ip_route} | grep "tun0")
 symbol=${VPN_SYMBOL}
 color=${OFF_COLOR}
 
-if [[ -d "${VPN_INTERFACE}" ]]; then
+if [[ ! -z "${is_tun}" ]]; then
   symbol=${VPN_SYMBOL}
   color=${ON_COLOR}
 fi
