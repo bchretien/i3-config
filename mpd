@@ -26,7 +26,7 @@ from shutil import which
 mpc_cmd = ["mpc", "-p", "49000"]
 
 size = 12
-on_color = "#BA00FF"
+on_color = "#ffcc33"
 off_color = "#333333"
 
 header = ""

@@ -30,11 +30,13 @@ my $t_warn = 70;
 my $t_crit = 90;
 my $chip = "";
 my $temperature = -9999;
+my $lower_color = "FFFF00";
+my $upper_color = "FF0000";
 
 sub help {
     print "Usage: temperature [-w <warning>] [-c <critical>] [--chip <chip>]\n";
-    print "-w <percent>: warning threshold to become yellow\n";
-    print "-c <percent>: critical threshold to become red\n";
+    print "-w <temperature>: warning threshold\n";
+    print "-c <temperature>: critical threshold\n";
     print "--chip <chip>: sensor chip\n";
     exit 0;
 }
@@ -43,6 +45,28 @@ GetOptions("help|h" => \&help,
            "w=i"    => \$t_warn,
            "c=i"    => \$t_crit,
            "chip=s" => \$chip);
+
+# Simple linear color gradient
+sub color_gradient {
+    my ($min, $max) = @_;
+    my $range = $max - $min;
+
+    return sub {
+        my $num = shift;
+        return $lower_color if $num <= $min; # lower boundry
+        return $upper_color if $num >= $max; # upper boundary
+
+        my $alpha = ($num - $min) / $range;
+        my @lower_rgb = map $_, unpack 'C*', pack 'H*', $lower_color;
+        my @upper_rgb = map $_, unpack 'C*', pack 'H*', $upper_color;
+        my @scaled_rgb = (0, 0, 0);
+        for (my $i = 0; $i < 3; $i++) {
+          $scaled_rgb[$i] = int($lower_rgb[$i]
+                                + $alpha * ($upper_rgb[$i] - $lower_rgb[$i]));
+        }
+        return sprintf "%02X%02X%02X" => $scaled_rgb[0], $scaled_rgb[1], $scaled_rgb[2];
+    };
+}
 
 # Get chip temperature
 open (SENSORS, "sensors $chip |") or die "Cannot exec sensors $!";
@@ -59,12 +83,13 @@ $temperature eq -9999 and die 'Cannot find temperature';
 # Print short_text, full_text
 print "$temperature°C\n" x2;
 
-# Print color, if needed
-if ($temperature >= $t_crit) {
-    print "#FF0000\n";
-    exit 33;
-} elsif ($temperature >= $t_warn) {
-    print "#FFFC00\n";
+# Print color gradient, if needed
+if ($temperature >= $t_warn) {
+    my $color_gradient = color_gradient($t_warn, $t_crit);
+    print "#", $color_gradient->($temperature), "\n";
+    if ($temperature >= $t_crit) {
+        exit 33;
+    }
 }
 
 exit 0;

@@ -3,7 +3,7 @@
 ETH_SYMBOL="\uf0e8"
 WIFI_SYMBOL="\uf1eb"
 SIZE="12"
-ON_COLOR="green"
+ON_COLOR="#FFCC33"
 OFF_COLOR="#191919"
 
 ip_route=$(ip route)

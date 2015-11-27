@@ -2,7 +2,7 @@
 
 VPN_SYMBOL="\uf023"
 SIZE="12"
-ON_COLOR="green"
+ON_COLOR="#ffcc33"
 OFF_COLOR="#333333"
 
 ip_route=$(ip route get 1)

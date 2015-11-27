@@ -18,7 +18,7 @@ def get_github_username():
     return subprocess.check_output(['git', 'config', 'github.user']) \
             .rstrip().decode('utf-8')
 
-def request_token(username):
+def request_token():
     """
     Request a GitHub token for later use.
     """
@@ -27,6 +27,7 @@ def request_token(username):
 
     password = ''
 
+    username = get_github_username()
     while not password:
         password = getpass('Password for GitHub user {0}: '.format(username))
 
@@ -34,7 +35,11 @@ def request_token(username):
     note_url = 'https://github.com/bchretien/i3-config'
     scopes = ['notifications']
 
-    auth = authorize(username, password, scopes, note, note_url)
+    try:
+        auth = authorize(username, password, scopes, note, note_url)
+    except Exception as e:
+        print("Error: could not generate token", file=sys.stderr)
+        sys.exit(1)
 
     with open(CREDENTIALS_FILE, 'w') as fd:
         fd.write("%s\n%i" % (auth.token, auth.id))
@@ -51,15 +56,21 @@ def github_login():
     gh = login(token=token)
     return gh
 
+def browse_github(with_notifications=False):
+    """
+    """
+    import webbrowser
+    if with_notifications:
+        url = "https://github.com/notifications"
+    else:
+        url = "https://github.com/"
+    webbrowser.open(url)
+
 def get_notifications():
     """
     Get the GitHub notifications.
     """
     username = get_github_username()
-
-    if not os.path.isfile(CREDENTIALS_FILE):
-        request_token(username)
-
     gh = github_login()
     return gh.notifications()
 
@@ -71,15 +82,23 @@ def print_block():
     color = "#333333"
     symbol = "\uf09b"
 
-    notifications = get_notifications()
-    n = sum(1 for _ in notifications)
-    if n > 0:
-        color = "#ff9933"
+    n = 0
+    try:
+        notifications = get_notifications()
+        n = sum(1 for _ in notifications)
+        if n > 0:
+            color = "#ff6600"
+        else:
+            color = "#ffcc33"
+    except Exception as e:
+        pass
 
     msg = "<span font='%i' color='%s'>%s</span>" \
           % (size, color, symbol)
     print(msg)
     print(msg)
+
+    return n
 
 
 if __name__ == "__main__":
@@ -95,4 +114,10 @@ if __name__ == "__main__":
                file=sys.stderr)
         sys.exit(1)
 
-    print_block()
+    n = print_block()
+
+    button_pressed = int(os.environ["BLOCK_BUTTON"]) \
+                       if "BLOCK_BUTTON" in os.environ and len(os.environ["BLOCK_BUTTON"]) > 0 \
+                       else 0
+    if button_pressed == 1:
+        browse_github(n > 1)

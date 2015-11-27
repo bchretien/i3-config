@@ -2,7 +2,7 @@
 
 CAM_SYMBOL="\uf030"
 SIZE="10"
-ON_COLOR="green"
+ON_COLOR="#ffcc33"
 OFF_COLOR="#333333"
 VIDEO_DEVICE="/dev/video0"
 
