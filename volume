@@ -39,6 +39,12 @@ SCONTROL="${BLOCK_INSTANCE:-$(amixer -D $MIXER scontrols |
 # This may be in in % or dB (eg. 5% or 3dB)
 STEP="${1:-5%}"
 
+SYMBOL_SPEAKERS="\uf028"
+SYMBOL_HEADPHONES="\uf025"
+SYMBOL_MUTED="\uf025"
+SYMBOL_ON_COLOR="#FFCC33"
+SYMBOL_OFF_COLOR="#191919"
+
 #------------------------------------------------------------------------
 
 capability() { # Return "Capture" if the device is a capture device
@@ -74,8 +80,18 @@ esac
 
 speakers_disabled=$(amixer -c 0 sget "HP/Speaker Auto Detect" | grep Playback | grep -ci off)
 
-if [ "$speakers_disabled" = 1 ] ; then
-  echo "<span font_weight=\"normal\">$(volume | format)</span>"
+value=$(volume | format)
+color=${SYMBOL_ON_COLOR}
+
+if [ "${speakers_disabled}" = 1 ] ; then
+  symbol=${SYMBOL_HEADPHONES}
 else
-  echo "<span font_weight=\"ultrabold\">$(volume | format)</span>"
+  symbol=${SYMBOL_SPEAKERS}
 fi
+
+if [ "${value}" == "MUTE" ]; then
+  color=${SYMBOL_OFF_COLOR}
+  value="0%"
+fi
+
+echo -e "<span font='12' color='${color}'>${symbol}</span><span font='4'> </span><span>${value}</span>"
