@@ -122,6 +122,7 @@ def github_login():
 
 def browse_github(with_notifications=False):
     """
+    Spawn the webbrowser on the adequate page.
     """
     import webbrowser
     if with_notifications:
