@@ -7,59 +7,106 @@ import os
 import sys
 import argparse
 import subprocess
+from getpass import getpass
 
-from github3 import login
+from github3 import login, exceptions, authorize
 
 # Credentials files. DO NOT SHARE/COMMIT/WHATEVER.
-CREDENTIALS_FILE = os.path.expanduser("~/.i3/.gh_token")
+CREDENTIALS_FILE = os.path.expanduser("~/.local/share/i3blocks/gh_token")
+
+# Size of the message
+SIZE = 12
+# Color if GitHub could not be queried
+COLOR_OFF = "#333333"
+# Color if GitHub could be queried, but no notification was found
+COLOR_ON = "#ffcc33"
+# Color if notifications were found
+COLOR_NOTIF = "#ff6600"
+# Symbol/text used
+SYMBOL = "\uf09b"
 
 
 def get_github_username():
     """
-    Get the GitHub user name from git config.
+    Get the GitHub user name from git config, or ask the user directly.
     """
-    user = subprocess.check_output(['git', 'config', 'github.user']).rstrip()
-    return user.decode('utf-8')
+    try:
+        user = subprocess.check_output(['git', 'config', 'github.user'])
+        return user.rstrip().decode('utf-8')
+    except subprocess.CalledProcessError:
+        # For Python 2/3 compatibility
+        try:
+            global input
+            input = raw_input
+        except NameError:
+            pass
+        return str(input("GitHub username: "))
+
+
+def get_github_password(username):
+    """
+    Get the GitHub password associated with the username.
+    """
+    password = ''
+    while not password:
+        password = getpass('Password for GitHub user {0}: '.format(username))
+    return password
+
+
+def read_github_token():
+    """
+    Read the GitHub token from the credentials file.
+    """
+    token = id = ''
+    with open(CREDENTIALS_FILE, 'r') as fd:
+        # Can't hurt to be paranoid
+        token = fd.readline().strip()
+        id = fd.readline().strip()
+    return token, id
 
 
 def request_token():
     """
     Request a GitHub token for later use.
     """
-    from getpass import getpass
-    from github3 import authorize
-
-    password = ''
-
     username = get_github_username()
-    while not password:
-        password = getpass('Password for GitHub user {0}: '.format(username))
+    password = get_github_password(username)
 
     note = 'GitHub notifications for i3blocks'
     note_url = 'https://github.com/bchretien/i3-config'
     scopes = ['notifications']
 
     try:
-        auth = authorize(username, password, scopes, note, note_url)
-    except Exception:
-        print("Error: could not generate token", file=sys.stderr)
+        auth = authorize(username, password, scopes=scopes, note=note,
+                         note_url=note_url)
+    except exceptions.GitHubError as e:
+        print("Error: could not generate token - \"%s\"" % e, file=sys.stderr)
         sys.exit(1)
 
+    if not os.path.exists(os.path.dirname(CREDENTIALS_FILE)):
+        os.makedirs(os.path.dirname(CREDENTIALS_FILE))
     with open(CREDENTIALS_FILE, 'w') as fd:
         fd.write("%s\n%i" % (auth.token, auth.id))
+
+
+def delete_token():
+    """
+    Revoke and delete the GitHub token (locally as well).
+    Revoking/deleting a token requires a login with username/password.
+    """
+    if os.path.exists(CREDENTIALS_FILE):
+        token, id = read_github_token()
+        username = get_github_username()
+        gh = login(username=username, password=get_github_password(username))
+        gh.authorization(id).delete()
+        os.remove(CREDENTIALS_FILE)
 
 
 def github_login():
     """
     Retrieve the GitHub token and log on GitHub.
     """
-    token = ''
-    with open(CREDENTIALS_FILE, 'r') as fd:
-        # Can't hurt to be paranoid
-        token = fd.readline().strip()
-
-    gh = login(token=token)
-    return gh
+    return login(token=read_github_token()[0])
 
 
 def browse_github(with_notifications=False):
@@ -85,23 +132,21 @@ def print_block():
     """
     Print block for i3blocks.
     """
-    size = 12
-    color = "#333333"
-    symbol = "\uf09b"
+    color = COLOR_OFF
 
     n = 0
     try:
         notifications = get_notifications()
         n = sum(1 for _ in notifications)
         if n > 0:
-            color = "#ff6600"
+            color = COLOR_NOTIF
         else:
-            color = "#ffcc33"
+            color = COLOR_ON
     except Exception:
         pass
 
     msg = "<span font='%i' color='%s'>%s</span>" \
-          % (size, color, symbol)
+          % (SIZE, color, SYMBOL)
     print(msg)
     print(msg)
 
@@ -110,9 +155,15 @@ def print_block():
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("--generate-token", action="store_true",
+    parser.add_argument("--generate-token", action="store_true", default=False,
                         help="generate a GitHub token")
+    parser.add_argument("--delete-token", action="store_true", default=False,
+                        help="delete the GitHub token")
     args = parser.parse_args()
+
+    if args.delete_token:
+        delete_token()
+        sys.exit(0)
 
     if args.generate_token:
         request_token()
