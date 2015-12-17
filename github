@@ -1,5 +1,7 @@
-#!/usr/bin/env python3
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+
+from __future__ import print_function
 
 import os
 import sys
@@ -11,12 +13,14 @@ from github3 import login
 # Credentials files. DO NOT SHARE/COMMIT/WHATEVER.
 CREDENTIALS_FILE = os.path.expanduser("~/.i3/.gh_token")
 
+
 def get_github_username():
     """
     Get the GitHub user name from git config.
     """
-    return subprocess.check_output(['git', 'config', 'github.user']) \
-            .rstrip().decode('utf-8')
+    user = subprocess.check_output(['git', 'config', 'github.user']).rstrip()
+    return user.decode('utf-8')
+
 
 def request_token():
     """
@@ -37,24 +41,26 @@ def request_token():
 
     try:
         auth = authorize(username, password, scopes, note, note_url)
-    except Exception as e:
+    except Exception:
         print("Error: could not generate token", file=sys.stderr)
         sys.exit(1)
 
     with open(CREDENTIALS_FILE, 'w') as fd:
         fd.write("%s\n%i" % (auth.token, auth.id))
 
+
 def github_login():
     """
     Retrieve the GitHub token and log on GitHub.
     """
-    token = id = ''
+    token = ''
     with open(CREDENTIALS_FILE, 'r') as fd:
-        token = fd.readline().strip()  # Can't hurt to be paranoid
-        id = fd.readline().strip()
+        # Can't hurt to be paranoid
+        token = fd.readline().strip()
 
     gh = login(token=token)
     return gh
+
 
 def browse_github(with_notifications=False):
     """
@@ -66,13 +72,14 @@ def browse_github(with_notifications=False):
         url = "https://github.com/"
     webbrowser.open(url)
 
+
 def get_notifications():
     """
     Get the GitHub notifications.
     """
-    username = get_github_username()
     gh = github_login()
     return gh.notifications()
+
 
 def print_block():
     """
@@ -90,7 +97,7 @@ def print_block():
             color = "#ff6600"
         else:
             color = "#ffcc33"
-    except Exception as e:
+    except Exception:
         pass
 
     msg = "<span font='%i' color='%s'>%s</span>" \
@@ -110,14 +117,15 @@ if __name__ == "__main__":
     if args.generate_token:
         request_token()
     elif not os.path.isfile(CREDENTIALS_FILE):
-        print("Error: run script with --generate-token to generate a GitHub token",
-               file=sys.stderr)
+        print("Error: run script with --generate-token to generate"
+              " a GitHub token", file=sys.stderr)
         sys.exit(1)
 
     n = print_block()
 
-    button_pressed = int(os.environ["BLOCK_BUTTON"]) \
-                       if "BLOCK_BUTTON" in os.environ and len(os.environ["BLOCK_BUTTON"]) > 0 \
-                       else 0
+    button_pressed = 0
+    if "BLOCK_BUTTON" in os.environ and len(os.environ["BLOCK_BUTTON"]) > 0:
+        button_pressed = int(os.environ["BLOCK_BUTTON"])
+
     if button_pressed == 1:
         browse_github(n > 1)
