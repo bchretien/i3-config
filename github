@@ -5,6 +5,7 @@ from __future__ import print_function
 
 import os
 import sys
+import stat
 import argparse
 import subprocess
 from getpass import getpass
@@ -83,10 +84,20 @@ def request_token():
         print("Error: could not generate token - \"%s\"" % e, file=sys.stderr)
         sys.exit(1)
 
+    # Create the directory of the credentials file if necessary
     if not os.path.exists(os.path.dirname(CREDENTIALS_FILE)):
         os.makedirs(os.path.dirname(CREDENTIALS_FILE))
-    with open(CREDENTIALS_FILE, 'w') as fd:
-        fd.write("%s\n%i" % (auth.token, auth.id))
+
+    # Limit access to the credentials file
+    # See: http://stackoverflow.com/a/15015748/1043187
+    mode = stat.S_IRUSR | stat.S_IWUSR
+    umask_original = os.umask(0)
+    try:
+        handle = os.fdopen(os.open(CREDENTIALS_FILE, os.O_WRONLY | os.O_CREAT, mode), 'w')
+    finally:
+        os.umask(umask_original)
+    handle.write("%s\n%i" % (auth.token, auth.id))
+    handle.close()
 
 
 def delete_token():
