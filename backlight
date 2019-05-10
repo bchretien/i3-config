@@ -18,9 +18,9 @@ case $BLOCK_BUTTON in
     4) # scroll up
       xbacklight -inc 10 ;;
     5) # scroll down
-      if [[ $(xbacklight | sed "s/\..*//") -gt 15 ]]; then
+      if [[ $(xbacklight -getf | sed "s/\..*//") -gt 15 ]]; then
         xbacklight -dec 10
       fi;;
 esac
 
-xbacklight | sed "s/\..*/%/"
+xbacklight -getf | sed "s/\..*/%/"
