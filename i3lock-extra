@@ -31,17 +31,17 @@ random() {
 deskshot() {
 	declare dist_mode=$1; shift
 
-	case "$dist_mode" in
-		blur) scrot -e "convert -gaussian-blur 4x8 \$f ${cfg_tmpdir}/lockbg.png" "${cfg_tmpdir}/lockbg.png";;
-		pixelize) scrot -e "convert \$f -scale 10% -scale 1000% ${cfg_tmpdir}/lockbg.png" "${cfg_tmpdir}/lockbg.png";;
+	bg_image="${cfg_tmpdir}/lockbg.png"
+	case "${dist_mode:-pixelize}" in
+		blur) grim "${bg_image}" && convert -gaussian-blur 4x8 "${bg_image}" "${bg_image}" ;;
+		pixelize) grim "${bg_image}" && convert "${bg_image}" -scale 10% -scale 1000% "${bg_image}" ;;
 	esac
 
 	if (( $# )); then
-		convert -gravity center -composite -matte "${cfg_tmpdir}/lockbg.png" "$1" "${cfg_tmpdir}/lockbg.png"
+		convert -gravity center -composite -matte "${bg_image}" "$1" "${bg_image}"
 	fi
-	
-	image="${cfg_tmpdir}/lockbg.png"
-	printf '%s' "$image"
+
+	printf '%s' "${bg_image}"
 }
 
 main() {
@@ -67,23 +67,31 @@ main() {
 		#return 1
 	#}
 
-	[[ -d "$cfg_tmpdir" ]] || {
-		mkdir -p "$cfg_tmpdir" || {
+	[[ -d "${cfg_tmpdir}" ]] || {
+		mkdir -p "${cfg_tmpdir}" || {
 			return 1
 		}
 	}
 
-	case "${mode:-img}" in
+	case "${mode:-pixelize}" in
 		blur|pixelize) image=$( deskshot "$mode" );;
 		rnd) image=$( random "$1" );;
 		img) image="$1";;
 		*) usage; return 1;;
 	esac
 
-	until i3lock -n -t -i "$image"; do
+	if [[ "${XDG_SESSION_TYPE}" == "wayland" ]]; then
+		lock_cmd="swaylock -t -F --indicator-radius=100"
+		if [[ "${image}" != "" ]]; then
+			lock_cmd="${lock_cmd} -i '${image}'"
+		fi
+	else
+		lock_cmd="i3lock -n -t -i '${image}'"
+	fi
+
+	until eval ${lock_cmd}; do
 		true
 	done
 }
 
 main "$@"
-

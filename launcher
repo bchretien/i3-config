@@ -10,8 +10,8 @@ if command -v rofi >/dev/null 2>&1 ; then
   rofi_font="-xos4-terminus-medium-r-*-*-14-* 10"
   rofi_misc="-location 1 -padding 0 -width 100 -lines 4 -lazy-filter-limit -1"
   exec rofi -show run $rofi_misc \
-    -color-normal "$color_bg, $color_fg, $color_bgalt, $color_hbg, $color_hfg" \
-    -color-window "$color_bg, $color_border" \
+    -color-normal "$color_bg,$color_fg,$color_bgalt,$color_hbg,$color_hfg" \
+    -color-window "$color_bg,$color_border" \
     -font "$rofi_font"
 elif command -v dmenu >/dev/null 2>&1 ; then
   dmenu_font="-xos4-terminus-medium-r-*-*-14-*"

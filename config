@@ -41,9 +41,9 @@ set $white     #FFFFFF
 set $red       #FF0000
 set $blue      #005588
 
-client.focused          $darkgray $darkgray #FFFFFF   #333333
-client.focused_inactive $darkgray $darkgray #FFFFFF   #000000
-client.unfocused        $black    $black    #FFFFFF   #000000
+client.focused          $darkgray $darkgray $white $darkgray $darkgray
+client.focused_inactive $darkgray $darkgray $white $black $black
+client.unfocused        $black    $black    $white $black $black
 
 # use Mouse+$mod to drag floating windows to their wanted position
 floating_modifier $mod
@@ -55,7 +55,7 @@ bindsym $mod+Return exec $scriptdir/tmux_terminal
 bindsym $mod+c kill
 
 # start program launcher
-bindsym $mod+p exec $scriptdir/launcher "$black" "$lightgray" "$darkgray" "$lightgray" "$black"
+bindsym $mod+p exec $scriptdir/launcher "$black" "$lightgray" "$darkgray" "$white" "$black"
 
 # screen lock
 bindsym Control+$mod+l exec $scriptdir/i3lock-extra -m pixelize
@@ -204,6 +204,7 @@ for_window [class="Steam"]       floating enable
 for_window [class="Wine"]        floating enable
 for_window [class="YADWIN"]      floating enable border none
 for_window [instance="Download"] floating enable
+for_window [class="steam"] floating enable
 
 assign [title="Firefox"]     $WSWEB
 assign [title="qutebrowser"] $WSWEB
@@ -211,7 +212,7 @@ assign [title="SMPlayer"]    $WSVIDEO
 assign [class="Blender"]     $WSVIDEO
 assign [class="Skype"]       $WSCHAT
 assign [class="Mumble"]      $WSCHAT
-assign [title="Steam"]       $WSSTEAM
+assign [class="Steam"]       $WSSTEAM
 assign [class="Choreonoid"]  $WSGAME
 
 # Make the currently focused window a scratchpad
@@ -225,7 +226,7 @@ bar {
   #status_command ~/.i3/conky
 
   # i3blocks bar
-  status_command SCRIPTS_DIR=/usr/libexec/i3blocks i3blocks -c ~/.i3/i3blocks.conf
+  status_command SCRIPTS_DIR=/usr/lib/i3blocks i3blocks -c ~/.i3/i3blocks.conf
 
   # i3status bar
   #status_command i3status
@@ -254,3 +255,15 @@ bar {
 
 # Run daemons used for i3blocks
 exec_always --no-startup-id ${HOME}/.i3/i3bar_system_daemon
+
+# Setup swayidle
+exec --no-startup-id ${HOME}/.i3/sway_idle \
+       timeout 300 '${HOME}/.i3/i3lock-extra' \
+       timeout 500 'swaymsg "output * dpms off"' \
+       resume 'swaymsg "output * dpms on"' \
+       before-sleep '${HOME}/.i3/i3lock-extra'
+
+# Sway
+output "*" background /home/ben/Pictures/wallpapers/kyoto_japan-hd-wallpaper-.jpg fill
+input "*" xkb_layout "us"
+input "*" xkb_variant "intl"

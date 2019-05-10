@@ -27,8 +27,10 @@ else
     urxvt -e "$SHELL -c \"$COMMAND\""
   elif [[ "$TERMINAL" = "termite" ]]; then
     termite -e "$SHELL -c \"$COMMAND\""
+  elif [[ "$TERMINAL" = "alacritty" ]]; then
+    alacritty -e $SHELL -c "$COMMAND"
   else
-     i3-sensible-terminal
+    i3-sensible-terminal
   fi
 fi
 

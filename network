@@ -4,7 +4,7 @@ ETH_SYMBOL="\uf0e8"
 WIFI_SYMBOL="\uf1eb"
 SIZE="12"
 ON_COLOR="#FFCC33"
-OFF_COLOR="#191919"
+OFF_COLOR="#333333"
 
 ip_route=$(ip route)
 is_eth=$(echo ${ip_route} | grep "eth")

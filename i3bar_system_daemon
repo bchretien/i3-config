@@ -3,6 +3,7 @@
 VIDEO_DEVICE="/dev/video0"
 MICRO_DEVICE="/dev/snd/pcmC*D*c"
 SOUND_DEVICE="/dev/snd/control*"
+DISPLAY_DEVICE="/sys/class/drm/card0*"
 NAME=$(basename "$0")
 SELF_PID=$$
 
@@ -33,3 +34,4 @@ kill_if_running
 wait_for_event ${SOUND_DEVICE} &
 wait_for_event ${MICRO_DEVICE} &
 wait_for_event ${VIDEO_DEVICE} &
+wait_for_event ${DISPLAY_DEVICE} &
